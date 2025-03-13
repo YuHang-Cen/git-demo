@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 import torch 
 import torch.nn.functional as F
-from torch_geometric.datasets import Planetoid
+from torch_geometric.datasets import Planetoid, DBLP
 from torch_geometric.nn import GCNConv
 
 class GCN(torch.nn.Module):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.conv1 = GCNConv(dataset.num_node_features,16)
-        self.conv2 = GCNConv(16, dataset.num_classes)
+        self.conv1 = GCNConv(128,16)
+        self.conv2 = GCNConv(16, 4)
     def forward(self,data):
         x, edge_index = data.x, data.edge_index
         x = self.conv1(x, edge_index)
@@ -19,8 +19,8 @@ class GCN(torch.nn.Module):
 
         return F.log_softmax(x, dim=1)
 
-dataset = Planetoid(root='data_Cora/', name = 'Cora')
-
+# dataset = Planetoid(root='data_Cora/', name = 'Cora')
+dataset = DBLP(root='data_DBLP')
 device = torch.device('cuda')
 model = GCN().to(device)
 data = dataset[0].to(device)
